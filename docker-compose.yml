@@ -1,0 +1,24 @@
+# Version of Docker compose file
+version: "3"
+
+# Define the services
+services:
+    database:
+        image: "postgres"
+        ports:
+            - "5432:5432"
+        volumes:
+            - ./pgdata:/var/lib/postgresql/data
+            - ./sql/database_init.sql:/docker-entrypoint-initdb.d/database_init.sql
+        environment:
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    pgadmin:
+        image: dpage/pgadmin4
+        restart: always
+        environment:
+            PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+            PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+        ports:
+            - "5050:80"
+
