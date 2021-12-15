@@ -1,1 +1,9 @@
-setup data structure to load data into in data warehouse
+finish api
+build custom python image container
+create dockerfile for that image and postgresql database
+add creds to .env
+use env vars in docker compose
+
+
+black
+S

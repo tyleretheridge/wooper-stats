@@ -1,11 +1,10 @@
 # File to pull data from twitch API
 import requests
 import os
+import psycopg2.extras as p
 from dotenv import load_dotenv
 from utils.auth_config import load_twitch_creds, load_warehouse_creds
 from utils.database import DatastoreConnection, Connection
-import psycopg2.extras as p
-
 
 
 def fetch_token(twitch_credentials):
@@ -18,19 +17,16 @@ def fetch_token(twitch_credentials):
 
 
 def api_requests(client_id, access_token, endpoint, params=None):
-	URL = "https://api.twitch.tv/helix/" + endpoint
-	headers = {
-    'Client-Id': client_id,
-    'Authorization': f"Bearer {access_token}"
-	}
+    URL = "https://api.twitch.tv/helix/" + endpoint
+    headers = {"Client-Id": client_id, "Authorization": f"Bearer {access_token}"}
 
-	r = requests.get(url=URL, headers=headers, params=params)
+    r = requests.get(url=URL, headers=headers, params=params)
 
-	return r.json().get("data", [])
+    return r.json().get("data", [])
 
 
 def insertion_query():
-	return '''
+    return """
 	INSERT INTO twitch.streams (
 		user_id,
 		user_login,
@@ -47,33 +43,29 @@ def insertion_query():
 		%(language)s,
 		%(is_mature)s
 	);
-	'''
-
-
-
+	"""
 
 
 def extract():
-	# Load secrets into env
-	load_dotenv()
-	# create key value pairs for secrets
-	twitch_credentials = load_twitch_creds()
-	# Post request for access token
-	client_id, access_token = fetch_token(twitch_credentials)
-	# Get request data
-	endpoint = "streams"
-	data = api_requests(client_id, access_token, endpoint)
+    # Load secrets into env
+    load_dotenv()
+    # create key value pairs for secrets
+    twitch_credentials = load_twitch_creds()
+    # Post request for access token
+    client_id, access_token = fetch_token(twitch_credentials)
+    # Get request data
+    endpoint = "streams"
+    data = api_requests(client_id, access_token, endpoint)
 
-	return data
-
+    return data
 
 
 def insertion(data):
-	conn = Connection(**load_warehouse_creds())
-	print(conn.user)
-	print(conn.password)
+    conn = Connection(**load_warehouse_creds())
+    with DatastoreConnection(conn).managed_cursor() as curr:
+        p.execute_batch(curr, insertion_query(), data)
 
 
 if __name__ == "__main__":
-	data = extract()
-	insertion(data)
+    data = extract()
+    insertion(data)
