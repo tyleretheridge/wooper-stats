@@ -5,35 +5,45 @@ from dotenv import dotenv_values
 
 
 
-keys = dotenv_values(".env")
+def get_auth():
+	
+	# Load secret form .env
+	keys = dotenv_values(".env")
 
-CLIENT_ID = keys["CLIENT_ID"]
-CLIENT_SECRET = keys["CLIENT_SECRET"]
-GRANT_TYPE = "client_credentials"
+	# Set params for API token retrieval
+	URL = "https://id.twitch.tv/oauth2/token"
+	PARAMS = {
+	"client_id": keys["CLIENT_ID"],
+	"client_secret": keys["CLIENT_SECRET"],
+	"grant_type": "client_credentials"
+	}
 
-URL = "https://id.twitch.tv/oauth2/token"
-PARAMS = {
-  "client_id": CLIENT_ID,
-  "client_secret": CLIENT_SECRET,
-  "grant_type": GRANT_TYPE
-}
+	# POST request for token
+	r = requests.post(url = URL, params = PARAMS)
+	# Fetch token from return data
+	access_token = r.json()["access_token"]
 
-
-
-
-
-r1 = requests.post(url = URL, params = PARAMS)
-token = r1.json()['access_token']
+	return keys["CLIENT_ID"], access_token
 
 
-URL2 = 'https://api.twitch.tv/helix/users?login=xqcow'
-headers = {
-    'Client-Id': CLIENT_ID,
-    'Authorization': f"Bearer {token}"
-}
+
+def api_requests(client_id, access_token, endpoint, params=None):
+	URL = "https://api.twitch.tv/helix/" + endpoint
+	headers = {
+    'Client-Id': client_id,
+    'Authorization': f"Bearer {access_token}"
+	}
+
+	r = requests.get(url=URL, headers=headers, params=params)
+
+	return r.json()
+
 
 
 
 if __name__ == "__main__":
-    r2 = requests.get(url=URL2, headers=headers)
-    print(r2.json())
+	endpoint = "streams"
+	client_id, access_token = get_auth()
+	data = api_requests(client_id, access_token, endpoint)
+	print(data)
+	print(data["data"][0])
