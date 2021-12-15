@@ -23,3 +23,7 @@ TWITCH_CLIENT_SECRET="your_secret_here"
 - Run `docker-compose up -d` to start up the containers in detached mode. If you get an error regarding no default env vars, make sure your CWD is root of the repo. 
 - This will create a postgres database following the schema described in `sql/database_init.sql`
 - You can then use the pgadmin container to interface graphically with the database. 
+
+If you want to interface with the database directly, in terminal use `docker-compose exec database bash` to gain access to the postgres container's terminal.
+
+Then use `psql -U postgres` to enter database. `\dt` will list tables found. 
