@@ -108,7 +108,9 @@ uvicorn main:app --reload
 ```
 
 This will start the app in the terminal, and you can inspect the endpoints and try interacting with the data by navigating to `localhost:8000/docs` in your browser
+This is what you should see
 
+![alt text](https://github.com/tyleretheridge/wooper-stats/blob/main/assets/images/fastapidocs.png?raw=true)
 
 ## Using pgadmin4
 1. In a browser, go to `localhost:5050` and login to the dashboard using the PGADMIN credentials listed in the `.env` sample above. 
