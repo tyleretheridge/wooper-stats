@@ -1,3 +1,4 @@
+# src/database.py
 from dataclasses import dataclass
 from auth_config import load_warehouse_creds
 from dotenv import load_dotenv
@@ -17,7 +18,7 @@ class Connection:
 
 def generate_db_url():
     """
-    Returns SQAlchemy URL
+    Constructor for URL that is abstracted away from .env loading
     """
     # Get creds from env
     load_dotenv()
@@ -25,19 +26,19 @@ def generate_db_url():
     return f"postgresql://{conn.user}:{conn.password}@{conn.host}/{conn.db}"
 
 
-# Load database URL
-
-SQLALCHEMY_DATABASE_URL = generate_db_url()
-
-# make engine with URL
-engine = create_engine(SQLALCHEMY_DATABASE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-Base = declarative_base()
-
-
+# Function that manages Session when passed as arg
 def get_db():
     db = SessionLocal()
     try:
         yield db
     finally:
         db.close()
+
+
+# Load database URL
+SQLALCHEMY_DATABASE_URL = generate_db_url()
+
+# Create session
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+Base = declarative_base()

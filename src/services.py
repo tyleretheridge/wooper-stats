@@ -1,17 +1,23 @@
-from typing import TYPE_CHECKING, List
-
-import database
+# src/services.py
 import models
 import schema
+from typing import TYPE_CHECKING, List
+import database
 
+# Useful for enforcing types across async functions
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
 
 def add_tables():
+    """
+    Generates tables in postgres database according to SQLAlchemy
+    model when this script is invoked directly via terminal.
+    """
     return database.Base.metadata.create_all(bind=database.engine)
 
 
+# Async functions that correspond to routes in main.py
 async def add_stream(
     stream_details: schema.StreamRequest, db: "Session"
 ) -> schema.StreamRequest:

@@ -7,6 +7,10 @@ from database import SessionLocal
 
 
 def fetch_token(twitch_credentials):
+    """
+    Uses twitch credentials loaded from .env to interact with OAuth2
+    to receive a token for making API calls
+    """
     URL = "https://id.twitch.tv/oauth2/token"
     r = requests.post(url=URL, params=twitch_credentials)
 
@@ -16,6 +20,13 @@ def fetch_token(twitch_credentials):
 
 
 def api_requests(client_id, access_token, endpoint, params=None):
+    """
+    Makes api calls to a given endpoint using
+    passed in client_id and access_token as credentials
+
+    Returns:
+        [List]: A list of a list of dict-like key-value pairs
+    """
     URL = "https://api.twitch.tv/helix/" + endpoint
     headers = {"Client-Id": client_id, "Authorization": f"Bearer {access_token}"}
 
@@ -39,7 +50,10 @@ def extract():
 
 
 def transform(data):
-    # Transform data into a list of stream objects
+    """
+    Transforms requested data into model class objects
+    to be added to database via sqlalchemy
+    """
     streams = list()
     for entry in data:
         obj = Streams(
@@ -55,17 +69,25 @@ def transform(data):
 
 
 def load(streams, session):
+    """Add data to database"""
     session.add_all(streams)
     session.commit()
     return "Stream data added to database"
 
 
 def execute_load(streams):
+    """Interface function for data loading that abstracts the life
+    of the database connection away from individual function calls.
+    """
     with SessionLocal() as session:
         load(streams, session)
 
 
-if __name__ == "__main__":
+def main():
     data = extract()
     streams = transform(data)
     execute_load(streams)
+
+
+if __name__ == "__main__":
+    main()

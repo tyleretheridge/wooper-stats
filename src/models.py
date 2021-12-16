@@ -1,9 +1,10 @@
+# src/models.py
 import datetime as dt
 from sqlalchemy import Integer, String, Boolean, DateTime
 from sqlalchemy.sql.schema import Column
 from database import Base
 
-
+# Base definition for SQLAlchemy
 class Streams(Base):
     __tablename__ = "streams"
     user_id = Column(String, primary_key=True)

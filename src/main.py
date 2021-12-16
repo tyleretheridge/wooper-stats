@@ -1,3 +1,4 @@
+# src/main.py
 import schema
 import database
 import services
@@ -10,11 +11,12 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from sqlalchemy.orm import Session
 
-
+# Create app
 app = FastAPI()
 
 
-@app.post("/api/streams", response_model=schema.StreamRequest)
+# Define routes
+@app.post("/api/streams/", response_model=schema.StreamRequest)
 async def add_stream(
     stream_details: schema.StreamRequest, db: Session = Depends(database.get_db)
 ):
