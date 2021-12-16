@@ -8,5 +8,7 @@ class StreamRequest(BaseModel):
     game_name: str
     viewer_count: int
     language: str
-    is_mature: bool
-    datetime: dt.datetime
+    stream_date: dt.datetime
+
+    class Config:
+        orm_mode = True

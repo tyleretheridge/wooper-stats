@@ -1,28 +1,47 @@
-from .schema import StreamRequest
-from .database import get_db
+import schema
+import database
+import services
 from sqlalchemy.orm import Session
-from .models import Streams
-from fastapi import FastAPI, Depends
+from models import Streams
+from fastapi import FastAPI, Depends, HTTPException
+from typing import TYPE_CHECKING, List
+
+
+if TYPE_CHECKING:
+    from sqlalchemy.orm import Session
+
 
 app = FastAPI()
 
 
-@app.post("/")
-def create(details: StreamRequest, db: Session = Depends(get_db)):
-    to_create = StreamRequest(
-        user_id=details.user_id,
-        user_login=details.user_login,
-        game_name=details.game_name,
-        viewer_count=details.viewer_count,
-        language=details.language,
-        is_mature=details.is_mature,
-        datetime=details.datetime,
-    )
-    db.add(to_create)
-    db.commit()
-    return {"success": True, "created_id": to_create.user_id}
+@app.post("/api/streams", response_model=schema.StreamRequest)
+async def add_stream(
+    stream_details: schema.StreamRequest, db: Session = Depends(database.get_db)
+):
+
+    return await services.add_stream(stream_details=stream_details, db=db)
 
 
-@app.get("/")
-def ret():
-    return "Hello World"
+@app.get("/api/streams/", response_model=List[schema.StreamRequest])
+async def get_all_streams(db: Session = Depends(database.get_db)):
+    return await services.get_all_streams(db)
+
+
+@app.get("/api/streams/{user_id}/", response_model=schema.StreamRequest)
+async def get_stream(user_id: str, db: Session = Depends(database.get_db)):
+    stream = await services.get_stream(user_id=user_id, db=db)
+    if stream is None:
+        raise HTTPException(status_code=404, detail="Stream not found")
+
+    return await services.get_stream(user_id=user_id, db=db)
+
+
+@app.delete("/api/streams/{user_id}/")
+async def delete_stream(user_id: str, db: Session = Depends(database.get_db)):
+    stream = await services.get_stream(user_id=user_id, db=db)
+    if stream is None:
+        raise HTTPException(status_code=404, detail="Stream not found")
+
+    await services.delete_stream(stream, db=db)
+
+    return "Successfully removed stream records"

@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from .auth_config import load_warehouse_creds
+from auth_config import load_warehouse_creds
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -36,7 +36,7 @@ Base = declarative_base()
 
 
 def get_db():
-    db = database.SessionLocal()
+    db = SessionLocal()
     try:
         yield db
     finally:
