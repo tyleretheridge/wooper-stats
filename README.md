@@ -107,9 +107,9 @@ The second command will use the `requests` library to get the top 100 channels c
 uvicorn main:app --reload
 ```
 
-This will start the app in the terminal, and you can inspect the endpoints and try interacting with the data by navigating to `localhost:8000/docs` in your browser
-This is what you should see
+This will start the app in the terminal, and you can inspect the endpoints and try interacting with the data by navigating to `localhost:8000/docs` in your browser   
 
+This is what you should see:
 ![alt text](https://github.com/tyleretheridge/wooper-stats/blob/main/assets/images/fastapidocs.png?raw=true)
 
 ## Using pgadmin4
