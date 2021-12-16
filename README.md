@@ -14,7 +14,7 @@ Installing and running the scripts will result in the following by default:
 
 
 
-# Prerequesites
+# Prerequisites
 
 1. Docker
 2. Docker-compose
