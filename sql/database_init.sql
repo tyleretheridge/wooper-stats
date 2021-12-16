@@ -5,7 +5,6 @@ CREATE TABLE IF NOT EXISTS twitch.streams (
     game_name VARCHAR(50),
     viewer_count INT,
     language VARCHAR,
-    is_mature BOOLEAN,
-    date DATETIME
+    stream_date DATETIME
     PRIMARY KEY (user_id)
 );

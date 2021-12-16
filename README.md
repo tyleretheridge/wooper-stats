@@ -127,3 +127,10 @@ To improve the automated nature of this project, create a python image definitio
 
 
 The current `requests` implementation is engineered to focus on ETL operations and building a system that strictly enforces uniform and standardized data models in the warehousing. Rerunning the etl script without flushing the database will likely cause errors with duplicate primary keys if a streamer is still live when you recall the script. To avoid this, alter the data query and table structure so that the data being scraped isn't at risk of this error. Use `sudo rm -rf pgdata/` at the root of this repo to delete the database (not the container). This is useful when stuff goes really wrong or you need to change the database structure.
+
+
+There is a `sql/` folder that contains the a SQL query that will generate the same table as the `service.py` does in the postgres container if you want to directly interface with raw SQL. To implement, add the following line to the `docker-compose.yml` file under volumes for the database service.   
+```
+- ./sql/database_init.sql:/docker-entrypoint-initdb.d/database_init.sql
+```
+This project simply aims to abstract towards more rigid modeling in management of the database systems, and has migrated from this implementation. Another method is to use Alembic. 
