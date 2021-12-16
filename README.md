@@ -27,3 +27,8 @@ TWITCH_CLIENT_SECRET="your_secret_here"
 If you want to interface with the database directly, in terminal use `docker-compose exec database bash` to gain access to the postgres container's terminal.
 
 Then use `psql -U postgres` to enter database. `\dt` will list tables found. 
+
+
+use python script running in another container to init the services
+stick to sqlalchemy as it demonstrates centralized modeling
+

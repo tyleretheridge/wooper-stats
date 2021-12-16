@@ -1,5 +1,4 @@
 import os
-import requests
 
 
 def load_warehouse_creds():

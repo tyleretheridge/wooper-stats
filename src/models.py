@@ -1,7 +1,7 @@
 import datetime as dt
 from sqlalchemy import Integer, String, Boolean, DateTime
 from sqlalchemy.sql.schema import Column
-from database import Base
+from .database import Base
 
 
 class Streams(Base):
